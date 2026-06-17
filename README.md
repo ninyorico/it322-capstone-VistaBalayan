@@ -25,6 +25,16 @@ VistaBalayan is a **web-based tourism data analytics and decision support system
 | **Establishment Staff** | Encodes and submits visitor and accommodation reports; manages their establishment's public listing |
 | **Tourists / Public Users** | Searches and views tourist establishments; receives AI-assisted recommendations |
 
+### What data needs to be stored?
+
+- Visitor reports (daily tourist arrivals, demographics, residence types)
+- Accommodation reports (room occupancy, guest nights, check-ins)
+- Establishment profiles (name, type, address, description, images, amenities)
+- User profiles (officers, establishment staff)
+- AI-generated insights and anomaly detections
+- Tourism analytics and trends
+- System notifications
+
 ### Technology Stack
 
 | Layer | Technology |
