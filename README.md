@@ -35,6 +35,16 @@ VistaBalayan is a **web-based tourism data analytics and decision support system
 - Tourism analytics and trends
 - System notifications
 
+### What does the user see?
+
+| User | Dashboard/Page |
+|------|----------------|
+| **Tourism Officer** | Analytics dashboard with KPIs, charts, visitor monitoring, accommodation monitoring, reports, AI insights |
+| **Establishment Staff** | Submission forms, submission history, analytics, AI insights, manage public listing  (establishment description, image, etc.)|
+| **Tourists** | Tourism information website with search, categories, establishment details, AI recommendations |
+
+---
+
 ### Technology Stack
 
 | Layer | Technology |
