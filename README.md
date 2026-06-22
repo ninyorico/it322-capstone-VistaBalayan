@@ -197,3 +197,41 @@ CREATE TABLE public.notifications (
 );
 
 
+CREATE TABLE public.ai_insights_cache (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  insight_type text NOT NULL,
+  data jsonb NOT NULL,
+  period text,
+  generated_at timestamp without time zone DEFAULT now(),
+  expires_at timestamp without time zone DEFAULT (now() + '24:00:00'::interval),
+  is_active boolean DEFAULT true,
+  CONSTRAINT ai_insights_cache_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE public.ai_recommendations (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  title text NOT NULL,
+  description text NOT NULL,
+  impact text CHECK (impact = ANY (ARRAY['high'::text, 'medium'::text, 'low'::text])),
+  category text,
+  status text DEFAULT 'active'::text,
+  created_at timestamp without time zone DEFAULT now(),
+  expires_at timestamp without time zone DEFAULT (now() + '7 days'::interval),
+  establishment_id uuid,
+  CONSTRAINT ai_recommendations_pkey PRIMARY KEY (id),
+  CONSTRAINT ai_recommendations_establishment_id_fkey FOREIGN KEY (establishment_id) REFERENCES public.establishments(id)
+);
+
+CREATE TABLE public.ai_anomalies_cache (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  anomaly_type text NOT NULL,
+  severity text CHECK (severity = ANY (ARRAY['high'::text, 'medium'::text, 'low'::text])),
+  description text NOT NULL,
+  recommendation text,
+  establishment_id uuid,
+  detected_at timestamp without time zone DEFAULT now(),
+  status text DEFAULT 'active'::text,
+  is_resolved boolean DEFAULT false,
+  CONSTRAINT ai_anomalies_cache_pkey PRIMARY KEY (id),
+  CONSTRAINT ai_anomalies_cache_establishment_id_fkey FOREIGN KEY (establishment_id) REFERENCES public.establishments(id)
+);
