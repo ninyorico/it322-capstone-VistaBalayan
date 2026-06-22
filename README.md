@@ -92,6 +92,69 @@ CREATE TABLE public.profiles (
   CONSTRAINT profiles_id_fkey FOREIGN KEY (id) REFERENCES auth.users(id)
 );
 
+CREATE TABLE public.establishments (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  name text NOT NULL,
+  type text NOT NULL,
+  address text NOT NULL,
+  contact_number text,
+  total_rooms integer DEFAULT 0,
+  status text DEFAULT 'active'::text,
+  created_at timestamp without time zone DEFAULT now(),
+  description text,
+  images ARRAY DEFAULT '{}'::text[],
+  opening_hours text,
+  website_url text,
+  email text,
+  amenities text,
+  featured boolean DEFAULT false,
+  updated_at timestamp without time zone DEFAULT now(),
+  CONSTRAINT establishments_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE public.visitor_reports (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  establishment_id uuid NOT NULL,
+  submitted_by uuid NOT NULL,
+  report_date date NOT NULL,
+  total_male integer DEFAULT 0,
+  total_female integer DEFAULT 0,
+  total_guests integer DEFAULT 0,
+  residence_type text,
+  place_of_residence text,
+  municipality_province text,
+  status text DEFAULT 'pending'::text,
+  reviewed_by uuid,
+  reviewed_at timestamp without time zone,
+  notes text,
+  created_at timestamp without time zone DEFAULT now(),
+  guest_name text,
+  CONSTRAINT visitor_reports_pkey PRIMARY KEY (id),
+  CONSTRAINT visitor_reports_establishment_id_fkey FOREIGN KEY (establishment_id) REFERENCES public.establishments(id),
+  CONSTRAINT visitor_reports_submitted_by_fkey FOREIGN KEY (submitted_by) REFERENCES public.profiles(id),
+  CONSTRAINT visitor_reports_reviewed_by_fkey FOREIGN KEY (reviewed_by) REFERENCES public.profiles(id)
+);
+
+
+CREATE TABLE public.accommodation_reports (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  establishment_id uuid NOT NULL,
+  submitted_by uuid NOT NULL,
+  report_date date NOT NULL,
+  total_rooms integer NOT NULL,
+  total_occupied_rooms integer DEFAULT 0,
+  total_check_ins integer DEFAULT 0,
+  total_guest_nights integer DEFAULT 0,
+  status text DEFAULT 'pending'::text,
+  reviewed_by uuid,
+  reviewed_at timestamp without time zone,
+  notes text,
+  created_at timestamp without time zone DEFAULT now(),
+  CONSTRAINT accommodation_reports_pkey PRIMARY KEY (id),
+  CONSTRAINT accommodation_reports_establishment_id_fkey FOREIGN KEY (establishment_id) REFERENCES public.establishments(id),
+  CONSTRAINT accommodation_reports_submitted_by_fkey FOREIGN KEY (submitted_by) REFERENCES public.profiles(id),
+  CONSTRAINT accommodation_reports_reviewed_by_fkey FOREIGN KEY (reviewed_by) REFERENCES public.profiles(id)
+);
 
 
 
