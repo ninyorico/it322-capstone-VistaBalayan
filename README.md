@@ -156,44 +156,5 @@ CREATE TABLE public.accommodation_reports (
   CONSTRAINT accommodation_reports_reviewed_by_fkey FOREIGN KEY (reviewed_by) REFERENCES public.profiles(id)
 );
 
-CREATE TABLE public.room_occupancy_details (
-  id uuid NOT NULL DEFAULT uuid_generate_v4(),
-  accommodation_report_id uuid,
-  room_type text,
-  room_code text,
-  number_of_rooms integer,
-  occupied_rooms integer,
-  check_ins integer,
-  guest_nights integer,
-  is_rent_mode boolean DEFAULT false,
-  CONSTRAINT room_occupancy_details_pkey PRIMARY KEY (id),
-  CONSTRAINT room_occupancy_details_accommodation_report_id_fkey FOREIGN KEY (accommodation_report_id) REFERENCES public.accommodation_reports(id)
-);
-
-CREATE TABLE public.ai_anomalies (
-  id uuid NOT NULL DEFAULT uuid_generate_v4(),
-  type text,
-  severity text,
-  description text,
-  establishment_id uuid,
-  detected_at timestamp without time zone DEFAULT now(),
-  status text DEFAULT 'active'::text,
-  recommendation text,
-  CONSTRAINT ai_anomalies_pkey PRIMARY KEY (id),
-  CONSTRAINT ai_anomalies_establishment_id_fkey FOREIGN KEY (establishment_id) REFERENCES public.establishments(id)
-);
-
-
-CREATE TABLE public.notifications (
-  id uuid NOT NULL DEFAULT uuid_generate_v4(),
-  user_id uuid NOT NULL,
-  title text NOT NULL,
-  message text NOT NULL,
-  type text,
-  is_read boolean DEFAULT false,
-  created_at timestamp without time zone DEFAULT now(),
-  CONSTRAINT notifications_pkey PRIMARY KEY (id),
-  CONSTRAINT notifications_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.profiles(id)
-);
 
 
