@@ -85,7 +85,6 @@ export default function OfficerLayout() {
         </nav>
       </aside>
 
-
                   <div className="flex items-center gap-3">
               <div className="relative">
                 <button
@@ -174,6 +173,7 @@ export default function OfficerLayout() {
 
               <div className="h-8 w-px bg-[#D9E2EC]"></div>
 
+ main
         <main className="p-4 sm:p-6">
           <Outlet />
         </main>
