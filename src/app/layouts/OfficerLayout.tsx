@@ -85,6 +85,32 @@ export default function OfficerLayout() {
         </nav>
       </aside>
 
+            {/* Main Content*/}
+      <div className="lg:ml-64">
+        <header className="bg-white/80 backdrop-blur-lg border-b border-[#D9E2EC] sticky top-0 z-40 shadow-sm">
+          <div className="px-4 sm:px-6 py-4 flex items-center justify-between">
+            <div className="flex items-center gap-4">
+
+              {/*Mobile menu button */}
+              <button
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="lg:hidden p-2.5 bg-gradient-to-r from-[#1293B8] to-[#1CA7C9] hover:from-[#0F4C75] hover:to-[#1293B8] rounded-xl transition-all duration-200 shadow-md"
+              >
+                <Menu className="w-5 h-5 text-white" />
+              </button>
+
+              {/*Search bar */}
+              <div className="relative hidden md:block">
+                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#6B7280]" />
+                <input
+                  type="text"
+                  placeholder="Search analytics..."
+                  className="pl-10 pr-4 py-2.5 bg-[#F2F5F7] border border-[#D9E2EC] rounded-xl focus:ring-2 focus:ring-[#1CA7C9] focus:border-[#1CA7C9] outline-none w-40 lg:w-80 text-sm transition-all"
+                />
+              </div>
+            </div>
+
+
                   <div className="flex items-center gap-3">
               <div className="relative">
                 <button
@@ -173,7 +199,6 @@ export default function OfficerLayout() {
 
               <div className="h-8 w-px bg-[#D9E2EC]"></div>
 
- main
         <main className="p-4 sm:p-6">
           <Outlet />
         </main>
