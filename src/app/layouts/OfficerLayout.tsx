@@ -85,6 +85,95 @@ export default function OfficerLayout() {
         </nav>
       </aside>
 
+                  <div className="flex items-center gap-3">
+              <div className="relative">
+                <button
+                  onClick={() => setNotificationOpen(!notificationOpen)}
+                  className="relative p-2.5 hover:bg-[#F2F5F7] rounded-xl transition-colors"
+                >
+                  <Bell className="w-5 h-5 text-[#6B7280]" />
+                  <span className="absolute top-2 right-2 w-2 h-2 bg-[#F59E0B] rounded-full ring-2 ring-white"></span>
+                </button>
+
+                {notificationOpen && (
+                  <div className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-xl border border-[#D9E2EC] z-50 max-h-96 overflow-y-auto">
+                    <div className="p-4 border-b border-[#D9E2EC]">
+                      <h3 className="text-sm font-semibold text-[#0F172A]">
+                        Notifications
+                      </h3>
+                    </div>
+
+                    <div className="py-2">
+                      <div className="px-4 py-3 hover:bg-[#F2F5F7] transition-colors border-l-4 border-[#F59E0B]">
+                        <div className="flex items-start gap-3">
+                          <div className="w-8 h-8 bg-[#FEF3C7] rounded-lg flex items-center justify-center flex-shrink-0">
+                            <Bell className="w-4 h-4 text-[#F59E0B]" />
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-sm font-medium text-[#0F172A]">
+                              Pending Review
+                            </p>
+                            <p className="text-xs text-[#6B7280] mt-1">
+                              2 new establishment reports awaiting your review
+                            </p>
+                            <p className="text-xs text-[#F59E0B] font-medium mt-1">
+                              1 hour ago
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="px-4 py-3 hover:bg-[#F2F5F7] transition-colors border-l-4 border-[#3B82F6]">
+                        <div className="flex items-start gap-3">
+                          <div className="w-8 h-8 bg-[#DBEAFE] rounded-lg flex items-center justify-center flex-shrink-0">
+                            <Bell className="w-4 h-4 text-[#3B82F6]" />
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-sm font-medium text-[#0F172A]">
+                              Monthly Report Available
+                            </p>
+                            <p className="text-xs text-[#6B7280] mt-1">
+                              May 2026 consolidated tourism report is ready for export
+                            </p>
+                            <p className="text-xs text-[#6B7280] font-medium mt-1">
+                              3 hours ago
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="px-4 py-3 hover:bg-[#F2F5F7] transition-colors border-l-4 border-[#22C55E]">
+                        <div className="flex items-start gap-3">
+                          <div className="w-8 h-8 bg-[#D1FAE5] rounded-lg flex items-center justify-center flex-shrink-0">
+                            <Bell className="w-4 h-4 text-[#22C55E]" />
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-sm font-medium text-[#0F172A]">
+                              New Establishment Registered
+                            </p>
+                            <p className="text-xs text-[#6B7280] mt-1">
+                              Balayan Heritage Park has been added to the system
+                            </p>
+                            <p className="text-xs text-[#6B7280] font-medium mt-1">
+                              1 day ago
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="p-3 border-t border-[#D9E2EC]">
+                      <button className="w-full text-center text-sm font-medium text-[#1CA7C9] hover:text-[#0F4C75] transition-colors">
+                        View All Notifications
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="h-8 w-px bg-[#D9E2EC]"></div>
+
+ main
         <main className="p-4 sm:p-6">
           <Outlet />
         </main>
