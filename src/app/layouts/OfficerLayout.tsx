@@ -85,6 +85,8 @@ export default function OfficerLayout() {
         </nav>
       </aside>
 
+<<<<<<< HEAD
+=======
             {/* Main Content*/}
       <div className="lg:ml-64">
         <header className="bg-white/80 backdrop-blur-lg border-b border-[#D9E2EC] sticky top-0 z-40 shadow-sm">
@@ -111,6 +113,7 @@ export default function OfficerLayout() {
             </div>
 
 
+>>>>>>> main
                   <div className="flex items-center gap-3">
               <div className="relative">
                 <button
@@ -197,8 +200,11 @@ export default function OfficerLayout() {
                 )}
               </div>
 
-              <div className="h-8 w-px bg-[#D9E2EC]"></div>
+              <div className="h-8 w-px bg-[#D9E2EC]"></div> 
 
+<<<<<<< HEAD
+ main
+=======
 
                <div className="relative">
                 <button
@@ -259,6 +265,7 @@ export default function OfficerLayout() {
 
 
 
+>>>>>>> main
         <main className="p-4 sm:p-6">
           <Outlet />
         </main>
