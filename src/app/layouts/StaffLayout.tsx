@@ -181,6 +181,63 @@ export default function StaffLayout() {
               <div className="h-8 w-px bg-[#D9E2EC]"></div>
 
 =======
+ {/* Profile Dropdown and Logout */}
+              <div className="relative">
+                <button
+                  onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+                  className="flex items-center gap-2 sm:gap-3 hover:bg-[#F2F5F7] rounded-xl transition-colors px-2 py-1.5"
+                >
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 bg-gradient-to-br from-[#1293B8] to-[#26B6D4] rounded-xl flex items-center justify-center text-white font-bold text-xs sm:text-sm shadow-md">
+                    ES
+                  </div>
+
+                  <div className="hidden sm:block text-left">
+                    <div className="text-sm font-semibold text-[#0F172A]">
+                      Establishment Staff
+                    </div>
+                    <div className="text-xs text-[#6B7280]">
+                      staff@establishment.com
+                    </div>
+                  </div>
+                </button>
+
+                
+                {profileDropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-[#D9E2EC] py-2 z-50">
+                    <button
+                      onClick={() => {
+                        navigate("/staff/profile");
+                        setProfileDropdownOpen(false);
+                      }}
+                      className="w-full flex items-center gap-3 px-4 py-3 hover:bg-[#F2F5F7] transition-colors text-left"
+                    >
+                      <User className="w-5 h-5 text-[#6B7280]" />
+                      <span className="text-sm font-medium text-[#0F172A]">
+                        Profile
+                      </span>
+                    </button>
+
+                    <div className="border-t border-[#D9E2EC] my-2"></div>
+
+                    <button
+                      onClick={() => {
+                        handleLogout();
+                        setProfileDropdownOpen(false);
+                      }}
+                      className="w-full flex items-center gap-3 px-4 py-3 hover:bg-red-50 transition-colors text-left"
+                    >
+                      <LogOut className="w-5 h-5 text-red-600" />
+                      <span className="text-sm font-medium text-red-600">
+                        Logout
+                      </span>
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </header>
+
 >>>>>>> main
 
 
