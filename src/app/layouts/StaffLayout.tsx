@@ -1,38 +1,39 @@
+//Ninyo
+import { supabase } from "../../lib/supabase";
+
 import { Outlet, NavLink, useNavigate } from "react-router";
 import {
   LayoutDashboard,
-  Building2,
-  Users,
+  FileUp,
   Bed,
-  FileText,
+  History,
   BarChart3,
   Brain,
-  Settings,
+  User,
   LogOut,
   Bell,
-  Search,
   Menu,
+  Building2,
 } from "lucide-react";
 import { useState } from "react";
-import { supabase } from "../../lib/supabase";
-
 
 const menuItems = [
-  { path: "/officer", icon: LayoutDashboard, label: "Dashboard" },
-  { path: "/officer/establishments", icon: Building2, label: "Establishments & Users" },
-  { path: "/officer/visitor-monitoring", icon: Users, label: "Visitor Monitoring" },
-  { path: "/officer/accommodation-monitoring", icon: Bed, label: "Accommodation Monitoring" },
-  { path: "/officer/reports", icon: FileText, label: "Reports" },
-  { path: "/officer/analytics", icon: BarChart3, label: "Analytics" },
-  { path: "/officer/ai-insights", icon: Brain, label: "AI Insights" },
+  { path: "/staff", icon: LayoutDashboard, label: "Dashboard" },
+  { path: "/staff/submit-visitor-report", icon: FileUp, label: "Submit Visitor Report" },
+  { path: "/staff/submit-accommodation-report", icon: Bed, label: "Submit Accommodation Report" },
+  { path: "/staff/submission-history", icon: History, label: "Submission History" },
+  { path: "/staff/analytics", icon: BarChart3, label: "Analytics" },
+  { path: "/staff/ai-insights", icon: Brain, label: "AI Insights" },
+  { path: "/staff/manage-listing", icon: Building2, label: "Manage Public Listing" },
 ];
 
-export default function OfficerLayout() {
+export default function StaffLayout() {
   const navigate = useNavigate();
 
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  const [notificationOpen, setNotificationOpen] = useState(false);
 
   const closeSidebarOnMobile = () => {
     if (window.innerWidth < 1024) {
@@ -40,9 +41,9 @@ export default function OfficerLayout() {
     }
   };
 
-    return (
+  return (
     <div className="min-h-screen bg-[#F2F5F7]">
-      {/* Mobile sidebar overlay*/}
+      {/*Mobile Sidebar Overlay*/}
       {sidebarOpen && (
         <div
           className="fixed inset-0 bg-black/50 z-[45] lg:hidden"
@@ -50,7 +51,7 @@ export default function OfficerLayout() {
         />
       )}
 
-      {/*Sidebar Navigation*/}
+      {/* Sidebar Navigation*/}
       <aside
         className={`fixed left-0 top-0 lg:top-0 h-full lg:h-full bg-white border-r border-[#D9E2EC] transition-all duration-300 shadow-xl ${
           sidebarOpen ? "w-64 z-50" : "w-0 lg:w-64 z-40"
@@ -58,9 +59,7 @@ export default function OfficerLayout() {
       >
         <div className="p-6 border-b border-[#D9E2EC] bg-gradient-to-r from-[#1293B8] to-[#1CA7C9]">
           <h1 className="text-xl font-bold text-white">VistaBalayan</h1>
-          <p className="text-sm text-white/80 mt-1">
-            Tourism Officer Portal
-          </p>
+          <p className="text-sm text-white/80 mt-1">Establishment Portal</p>
         </div>
 
         <nav className="p-4 space-y-1.5 overflow-y-auto h-[calc(100vh-130px)] lg:h-auto">
@@ -68,7 +67,7 @@ export default function OfficerLayout() {
             <NavLink
               key={item.path}
               to={item.path}
-              end={item.path === "/officer"}
+              end={item.path === "/staff"}
               onClick={closeSidebarOnMobile}
               className={({ isActive }) =>
                 `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
@@ -85,8 +84,7 @@ export default function OfficerLayout() {
         </nav>
       </aside>
 
-
-                  <div className="flex items-center gap-3">
+  {/*Notification System*/}
               <div className="relative">
                 <button
                   onClick={() => setNotificationOpen(!notificationOpen)}
@@ -96,11 +94,12 @@ export default function OfficerLayout() {
                   <span className="absolute top-2 right-2 w-2 h-2 bg-[#F59E0B] rounded-full ring-2 ring-white"></span>
                 </button>
 
+                {/* Notification Dropdown */}
                 {notificationOpen && (
                   <div className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-xl border border-[#D9E2EC] z-50 max-h-96 overflow-y-auto">
                     <div className="p-4 border-b border-[#D9E2EC]">
                       <h3 className="text-sm font-semibold text-[#0F172A]">
-                        Notifications
+                        Deadline Reminders
                       </h3>
                     </div>
 
@@ -110,15 +109,16 @@ export default function OfficerLayout() {
                           <div className="w-8 h-8 bg-[#FEF3C7] rounded-lg flex items-center justify-center flex-shrink-0">
                             <Bell className="w-4 h-4 text-[#F59E0B]" />
                           </div>
+
                           <div className="flex-1">
                             <p className="text-sm font-medium text-[#0F172A]">
-                              Pending Review
+                              Monthly Report Due Soon
                             </p>
                             <p className="text-xs text-[#6B7280] mt-1">
-                              2 new establishment reports awaiting your review
+                              Submit your monthly visitor and accommodation reports by May 15, 2026
                             </p>
                             <p className="text-xs text-[#F59E0B] font-medium mt-1">
-                              1 hour ago
+                              Due in 4 days
                             </p>
                           </div>
                         </div>
@@ -129,15 +129,16 @@ export default function OfficerLayout() {
                           <div className="w-8 h-8 bg-[#DBEAFE] rounded-lg flex items-center justify-center flex-shrink-0">
                             <Bell className="w-4 h-4 text-[#3B82F6]" />
                           </div>
+
                           <div className="flex-1">
                             <p className="text-sm font-medium text-[#0F172A]">
-                              Monthly Report Available
+                              Quarterly Report Reminder
                             </p>
                             <p className="text-xs text-[#6B7280] mt-1">
-                              May 2026 consolidated tourism report is ready for export
+                              Q2 2026 quarterly report submission opens on May 20, 2026
                             </p>
                             <p className="text-xs text-[#6B7280] font-medium mt-1">
-                              3 hours ago
+                              9 days remaining
                             </p>
                           </div>
                         </div>
@@ -148,15 +149,16 @@ export default function OfficerLayout() {
                           <div className="w-8 h-8 bg-[#D1FAE5] rounded-lg flex items-center justify-center flex-shrink-0">
                             <Bell className="w-4 h-4 text-[#22C55E]" />
                           </div>
+
                           <div className="flex-1">
                             <p className="text-sm font-medium text-[#0F172A]">
-                              New Establishment Registered
+                              Report Approved
                             </p>
                             <p className="text-xs text-[#6B7280] mt-1">
-                              Balayan Heritage Park has been added to the system
+                              Your April 2026 accommodation report has been approved
                             </p>
                             <p className="text-xs text-[#6B7280] font-medium mt-1">
-                              1 day ago
+                              2 days ago
                             </p>
                           </div>
                         </div>
@@ -172,7 +174,10 @@ export default function OfficerLayout() {
                 )}
               </div>
 
-              <div className="h-8 w-px bg-[#D9E2EC]"></div> 
+              <div className="h-8 w-px bg-[#D9E2EC]"></div>
+
+
+
 
         <main className="p-4 sm:p-6">
           <Outlet />
