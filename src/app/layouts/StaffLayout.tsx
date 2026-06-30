@@ -33,7 +33,10 @@ export default function StaffLayout() {
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+<<<<<<< HEAD
   const [notificationOpen, setNotificationOpen] = useState(false);
+=======
+>>>>>>> main
 
   const closeSidebarOnMobile = () => {
     if (window.innerWidth < 1024) {
@@ -84,6 +87,7 @@ export default function StaffLayout() {
         </nav>
       </aside>
 
+<<<<<<< HEAD
   {/*Notification System*/}
               <div className="relative">
                 <button
@@ -176,6 +180,8 @@ export default function StaffLayout() {
 
               <div className="h-8 w-px bg-[#D9E2EC]"></div>
 
+=======
+>>>>>>> main
 
 
 
