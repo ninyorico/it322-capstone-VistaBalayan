@@ -263,6 +263,6 @@ export default function OfficerLayout() {
           <Outlet />
         </main>
       </div>
-    </div>
+  
   );
 }
