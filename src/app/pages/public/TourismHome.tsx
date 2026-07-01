@@ -95,3 +95,59 @@ export default function TourismHome() {
     return cat?.icon || Building2
   }
 
+   return (
+    <div className="min-h-screen bg-gray-50">
+      {/*Hero Section and Search Bar*/}
+      <div className="relative bg-gradient-to-r from-[#0F4C75] via-[#1293B8] to-[#1CA7C9] text-white py-20">
+        <div className="absolute inset-0 bg-black/20"></div>
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">
+            Discover Balayan, Batangas
+          </h1>
+
+          <p className="text-xl md:text-2xl mb-8">
+            Explore the best tourist establishments in our municipality
+          </p>
+
+          <div className="max-w-2xl mx-auto">
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search by name, location, or description..."
+                className="w-full pl-12 pr-4 py-3 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-white"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/*Category Filter Buttons*/}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex flex-wrap gap-3 justify-center">
+          {categories.map((cat) => {
+            const Icon = cat.icon
+
+            return (
+              <button
+                key={cat.id}
+                onClick={() => setSelectedType(cat.id)}
+                className={`flex items-center gap-2 px-4 py-2 rounded-full transition ${
+                  selectedType === cat.id
+                    ? 'bg-[#1CA7C9] text-white'
+                    : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300'
+                }`}
+              >
+                <Icon className="w-4 h-4" />
+                {cat.name}
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
+ main
