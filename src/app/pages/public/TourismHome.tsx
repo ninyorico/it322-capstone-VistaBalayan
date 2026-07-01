@@ -150,4 +150,81 @@ export default function TourismHome() {
         </div>
       </div>
 
+      {/*Results Section and Establishment Cards*/}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+        <div className="flex justify-between items-center mb-6">
+          <p className="text-gray-600">
+            Found {filtered.length} establishment(s)
+          </p>
+        </div>
+
+        {loading ? (
+          <div className="flex justify-center py-12">
+            <Loader2 className="w-8 h-8 animate-spin text-[#1CA7C9]" />
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className="text-center py-12 bg-white rounded-xl">
+            <p className="text-gray-500">
+              No establishments found. Try a different search.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filtered.map((est) => {
+              const Icon = getCategoryIcon(est.type)
+              const displayImage =
+                est.images && est.images.length > 0 ? est.images[0] : null
+
+              return (
+                <div
+                  key={est.id}
+                  onClick={() => setSelectedEstablishment(est)}
+                  className="bg-white rounded-xl shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition transform hover:-translate-y-1"
+                >
+                  {displayImage ? (
+                    <img
+                      src={displayImage}
+                      alt={est.name}
+                      className="w-full h-48 object-cover"
+                    />
+                  ) : (
+                    <div className="h-48 bg-gradient-to-r from-[#0F4C75] to-[#1CA7C9] flex items-center justify-center">
+                      <Icon className="w-16 h-16 text-white opacity-50" />
+                    </div>
+                  )}
+
+                  <div className="p-5">
+                    <div className="flex justify-between items-start">
+                      <h3 className="text-xl font-bold text-gray-900">
+                        {est.name}
+                      </h3>
+
+                      <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">
+                        {est.type}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-1 mt-2 text-gray-600">
+                      <MapPin className="w-4 h-4" />
+                      <span className="text-sm">{est.address}</span>
+                    </div>
+
+                    {est.description && (
+                      <p className="text-gray-600 mt-3 text-sm line-clamp-2">
+                        {est.description}
+                      </p>
+                    )}
+
+                    <button className="mt-4 text-[#1CA7C9] font-medium flex items-center gap-1 hover:gap-2 transition-all">
+                      View Details <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        )}
+      </div>
+
+
  main
