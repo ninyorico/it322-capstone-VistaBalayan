@@ -228,3 +228,117 @@ export default function TourismHome() {
 
 
  main
+
+ {/*Establishment Details Modal*/}
+      {selectedEstablishment && (
+        <div
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+          onClick={() => setSelectedEstablishment(null)}
+        >
+          <div
+            className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {selectedEstablishment.images &&
+            selectedEstablishment.images.length > 0 ? (
+              <img
+                src={selectedEstablishment.images[0]}
+                alt=""
+                className="w-full h-64 object-cover"
+              />
+            ) : (
+              <div className="h-48 bg-gradient-to-r from-[#0F4C75] to-[#1CA7C9] flex items-center justify-center">
+                {React.createElement(
+                  getCategoryIcon(selectedEstablishment.type),
+                  {
+                    className: 'w-16 h-16 text-white opacity-50',
+                  }
+                )}
+              </div>
+            )}
+
+            <div className="p-6">
+              <h2 className="text-2xl font-bold text-gray-900">
+                {selectedEstablishment.name}
+              </h2>
+
+              <div className="flex items-center gap-2 mt-2">
+                <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">
+                  {selectedEstablishment.type}
+                </span>
+              </div>
+
+              <div className="mt-4 space-y-3">
+                <div className="flex items-start gap-2">
+                  <MapPin className="w-5 h-5 text-gray-500 mt-0.5" />
+                  <span className="text-gray-700">
+                    {selectedEstablishment.address}
+                  </span>
+                </div>
+
+                {selectedEstablishment.contact_number && (
+                  <div className="flex items-center gap-2">
+                    <Phone className="w-5 h-5 text-gray-500" />
+                    <span className="text-gray-700">
+                      {selectedEstablishment.contact_number}
+                    </span>
+                  </div>
+                )}
+
+                {selectedEstablishment.email && (
+                  <div className="flex items-center gap-2">
+                    <Mail className="w-5 h-5 text-gray-500" />
+                    <span className="text-gray-700">
+                      {selectedEstablishment.email}
+                    </span>
+                  </div>
+                )}
+
+                {selectedEstablishment.website_url && (
+                  <div className="flex items-center gap-2">
+                    <Globe className="w-5 h-5 text-gray-500" />
+
+                    <a
+                      href={selectedEstablishment.website_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:underline"
+                    >
+                      Visit Website
+                    </a>
+                  </div>
+                )}
+
+                {selectedEstablishment.opening_hours && (
+                  <div className="flex items-start gap-2">
+                    <Clock className="w-5 h-5 text-gray-500 mt-0.5" />
+                    <span className="text-gray-700">
+                      {selectedEstablishment.opening_hours}
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {selectedEstablishment.description && (
+                <div className="mt-4 pt-4 border-t">
+                  <h3 className="font-semibold text-gray-900 mb-2">About</h3>
+
+                  <p className="text-gray-600">
+                    {selectedEstablishment.description}
+                  </p>
+                </div>
+              )}
+
+              <button
+                onClick={() => setSelectedEstablishment(null)}
+                className="mt-6 w-full bg-[#1CA7C9] text-white py-3 rounded-lg hover:bg-[#0F4C75] transition font-semibold"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
