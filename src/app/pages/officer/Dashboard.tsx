@@ -273,6 +273,78 @@ export default function OfficerDashboard() {
     );
   }
 
+ {/* KPI Cards with real comparisons */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* KPI Card 1: Total Visitors */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600 mb-1">Total Visitors</p>
+              <p className="text-3xl font-bold text-gray-900">{totalVisitors.toLocaleString()}</p>
+              {totalVisitorsChange.value > 0 && (
+                <p className={`text-sm mt-1 ${totalVisitorsChange.isIncrease ? 'text-green-600' : 'text-red-600'}`}>
+                  {totalVisitorsChange.isIncrease ? '+' : '-'}{totalVisitorsChange.value.toFixed(1)}% vs last year
+                </p>
+              )}
+            </div>
+            <div className="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center">
+              <Users className="w-6 h-6 text-blue-600" />
+            </div>
+          </div>
+        </div>
+
+        {/*KPI Card 2: Monthly Arrivals */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600 mb-1">Monthly Arrivals</p>
+              <p className="text-3xl font-bold text-gray-900">{monthlyArrivals.toLocaleString()}</p>
+              {monthlyArrivalsChange.value > 0 && (
+                <p className={`text-sm mt-1 ${monthlyArrivalsChange.isIncrease ? 'text-green-600' : 'text-red-600'}`}>
+                  {monthlyArrivalsChange.isIncrease ? '+' : '-'}{monthlyArrivalsChange.value.toFixed(1)}% vs last month
+                </p>
+              )}
+            </div>
+            <div className="w-12 h-12 rounded-lg bg-purple-100 flex items-center justify-center">
+              <TrendingUp className="w-6 h-6 text-purple-600" />
+            </div>
+          </div>
+        </div>
+
+        {/* KPI Card 3: Occupancy Rate */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600 mb-1">Occupancy Rate</p>
+              <p className="text-3xl font-bold text-gray-900">{occupancyRate.toFixed(1)}%</p>
+              {occupancyRateChange.value > 0 && (
+                <p className={`text-sm mt-1 ${occupancyRateChange.isIncrease ? 'text-green-600' : 'text-red-600'}`}>
+                  {occupancyRateChange.isIncrease ? '+' : '-'}{occupancyRateChange.value.toFixed(1)}% vs last month
+                </p>
+              )}
+            </div>
+            <div className="w-12 h-12 rounded-lg bg-orange-100 flex items-center justify-center">
+              <Bed className="w-6 h-6 text-orange-600" />
+            </div>
+          </div>
+        </div>
+
+        {/*  KPI Card 4: Total Establishments */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600 mb-1">Total Establishments</p>
+              <p className="text-3xl font-bold text-gray-900">{totalEstablishments}</p>
+              {newEstablishments > 0 && (
+                <p className="text-sm text-green-600 mt-1">+{newEstablishments} this month</p>
+              )}
+            </div>
+            <div className="w-12 h-12 rounded-lg bg-teal-100 flex items-center justify-center">
+              <Building2 className="w-6 h-6 text-teal-600" />
+            </div>
+          </div>
+        </div>
+      </div>
 
 
 
