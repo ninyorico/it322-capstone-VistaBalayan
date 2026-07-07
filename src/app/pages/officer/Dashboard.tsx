@@ -272,3 +272,67 @@ export default function OfficerDashboard() {
       </div>
     );
   }
+
+
+
+
+  {/* Charts Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Monthly Visitor Trends</h3>
+          {visitorTrends.length > 0 ? (
+            <ResponsiveContainer width="100%" height={300}>
+              <AreaChart data={visitorTrends}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Area type="monotone" dataKey="visitors" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.6} name="Visitors" />
+              </AreaChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="text-center py-12 text-gray-500">No visitor data available yet</div>
+          )}
+        </div>
+
+        
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Visitor Demographics</h3>
+          {demographics.length > 0 && demographics.some(d => d.value > 0) ? (
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie data={demographics} cx="50%" cy="50%" labelLine={false} label={({ name, value }) => `${name}: ${value}%`} outerRadius={100} dataKey="value">
+                  {demographics.map((entry, idx) => <Cell key={idx} fill={entry.color} />)}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="text-center py-12 text-gray-500">No demographic data available yet</div>
+          )}
+        </div>
+      </div>
+
+     
+
+      {/* Top Performing Establishments */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Top Performing Establishments (by visitors)</h3>
+        {topEstablishments.length > 0 ? (
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={topEstablishments}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} />
+              <YAxis />
+              <Tooltip />
+              <Bar dataKey="visitors" fill="#3b82f6" name="Visitors" />
+            </BarChart>
+          </ResponsiveContainer>
+        ) : (
+          <div className="text-center py-12 text-gray-500">No establishment data available yet</div>
+        )}
+      </div>
+
+    
