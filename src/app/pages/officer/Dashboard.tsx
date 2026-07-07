@@ -407,4 +407,68 @@ export default function OfficerDashboard() {
         )}
       </div>
 
-    
+
+    {/* Recent Submissions & Anomalies */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* MEMBER 4: CATHERINE - Recent Submissions List */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Submissions</h3>
+          <div className="space-y-3">
+            {recentSubmissions.length > 0 ? (
+              recentSubmissions.map((sub) => (
+                <div key={sub.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div>
+                    <p className="font-medium text-gray-900">{sub.establishment_name}</p>
+                    <p className="text-sm text-gray-600">{sub.type}</p>
+                  </div>
+                  <div className="text-right">
+                    <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${
+                      sub.status === "approved" ? "bg-green-100 text-green-700" :
+                      sub.status === "pending" ? "bg-yellow-100 text-yellow-700" : "bg-red-100 text-red-700"
+                    }`}>
+                      {sub.status === "approved" && <CheckCircle className="w-3 h-3" />}
+                      {sub.status === "pending" && <Clock className="w-3 h-3" />}
+                      {sub.status}
+                    </span>
+                    <p className="text-xs text-gray-500 mt-1">{sub.date}</p>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-8 text-gray-500">No submissions yet</div>
+            )}
+          </div>
+        </div>
+
+        {/* Recent AI Anomaly Detections */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Anomaly Detections</h3>
+          <div className="space-y-3">
+            {anomalies.length > 0 ? (
+              anomalies.map((anomaly) => (
+                <div key={anomaly.id} className={`flex items-start gap-3 p-3 rounded-lg border ${
+                  anomaly.severity === "high" ? "bg-red-50 border-red-200" : "bg-yellow-50 border-yellow-200"
+                }`}>
+                  <AlertTriangle className={`w-5 h-5 mt-0.5 ${
+                    anomaly.severity === "high" ? "text-red-600" : "text-yellow-600"
+                  }`} />
+                  <div className="flex-1">
+                    <div className="flex justify-between mb-1">
+                      <p className="font-medium text-gray-900">{anomaly.type}</p>
+                      <span className={`px-2 py-0.5 rounded text-xs font-medium ${
+                        anomaly.severity === "high" ? "bg-red-100 text-red-700" : "bg-yellow-100 text-yellow-700"
+                      }`}>{anomaly.severity}</span>
+                    </div>
+                    <p className="text-sm text-gray-700 mt-1">{anomaly.description}</p>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-8 text-gray-500">No anomalies detected</div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
