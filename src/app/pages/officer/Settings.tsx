@@ -80,6 +80,42 @@ export default function OfficerProfile() {
     setSaving(false);
   };
 
+  const handleChangePassword = async () => {
+    if (!formData.new_password) {
+      toast.error("Please enter a new password");
+      return;
+    }
+
+    if (formData.new_password !== formData.confirm_password) {
+      toast.error("New passwords do not match");
+      return;
+    }
+
+    if (formData.new_password.length < 6) {
+      toast.error("Password must be at least 6 characters");
+      return;
+    }
+
+    setSaving(true);
+
+    const { error } = await supabase.auth.updateUser({
+      password: formData.new_password
+    });
+
+    if (error) {
+      toast.error("Failed to update password: " + error.message);
+    } else {
+      toast.success("Password updated successfully");
+      setFormData({
+        ...formData,
+        new_password: "",
+        confirm_password: "",
+      });
+    }
+
+    setSaving(false);
+  };
+
 
 
    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
@@ -137,6 +173,13 @@ export default function OfficerProfile() {
         </div>
       </div>
 
+<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+          <Mail className="w-5 h-5 text-orange-600" />
+          Change Password
+        </h3>
+
+      </div>
 
 
 <div className="flex justify-end">
