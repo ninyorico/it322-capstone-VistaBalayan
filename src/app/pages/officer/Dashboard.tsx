@@ -272,10 +272,17 @@ export default function OfficerDashboard() {
       </div>
     );
   }
-
+ return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+        <p className="text-gray-600 mt-1">Welcome to VistaBalayan Tourism Management System</p>
+      </div>
+      
  {/* KPI Cards with real comparisons */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {/* KPI Card 1: Total Visitors */}
+        {/*
+         KPI Card 1: Total Visitors */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <div className="flex items-center justify-between">
             <div>
