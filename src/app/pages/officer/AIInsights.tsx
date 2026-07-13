@@ -86,3 +86,48 @@ export default function AIInsights() {
       setLoading(false)
     }
   }
+
+   const refreshData = async () => {
+    setRefreshing(true)
+    try {
+      const { insights: newInsights, anomalies: newAnomalies } = await geminiService.refreshAllData()
+      
+      // Reload cached data
+      await loadCachedData()
+      
+      console.log(`✅ Data refreshed: ${newInsights?.length || 0} insights, ${newAnomalies?.length || 0} anomalies`)
+    } catch (error) {
+      console.error('Error refreshing data:', error)
+    } finally {
+      setRefreshing(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 animate-spin text-[#1CA7C9] mx-auto mb-4" />
+          <p className="text-gray-600">Loading AI insights...</p>
+        </div>
+      </div>
+    )
+  }
+
+      {/* AI Status Card */}
+      <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg shadow-sm p-6">
+        <div className="flex items-center gap-4">
+          <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center">
+            <Brain className="w-8 h-8" />
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold mb-1">AI Analysis Active</h2>
+            <p className="text-purple-100">
+              Powered by Google Gemini AI 
+            </p>
+          </div>
+        </div>
+      </div>
+
+
+
