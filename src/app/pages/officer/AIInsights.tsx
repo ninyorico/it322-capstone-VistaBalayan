@@ -130,4 +130,38 @@ export default function AIInsights() {
       </div>
 
 
+ {/* AI Recommendations */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+          <TrendingUp className="w-5 h-5 text-purple-600" />
+          AI-Powered Recommendations
+        </h3>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {insights.length > 0 ? (
+            insights.map((insight) => (
+              <div key={insight.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition">
+                <div className="flex items-start justify-between mb-2">
+                  <h4 className="font-semibold text-gray-900">{insight.title}</h4>
+                  <span className={`px-2 py-0.5 rounded text-xs font-medium ${
+                    insight.impact === 'high' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'
+                  }`}>
+                    {insight.impact} impact
+                  </span>
+                </div>
+                <p className="text-sm text-gray-600 mb-3">{insight.description}</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-gray-500 font-medium">Category: {insight.category}</span>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="col-span-2 text-center py-8 text-gray-500">
+              No recommendations available. Click "Refresh Analysis" to generate insights.
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
 
+}
