@@ -272,9 +272,7 @@ export default function OfficerDashboard() {
       </div>
     );
   }
-<<<<<<< HEAD
-x
-=======
+
  return (
     <div className="space-y-6">
       <div>
@@ -482,4 +480,4 @@ x
     </div>
   );
 }
->>>>>>> main
+
