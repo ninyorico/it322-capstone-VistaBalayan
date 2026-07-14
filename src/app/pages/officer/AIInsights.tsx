@@ -113,6 +113,27 @@ export default function AIInsights() {
       </div>
     )
   }
+   return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">AI Insights</h1>
+          <p className="text-gray-600 mt-1">
+            AI-powered anomaly detection and intelligent recommendations
+          </p>
+          {lastUpdated && (
+            <p className="text-xs text-gray-400 mt-1">Last updated: {lastUpdated}</p>
+          )}
+        </div>
+        <button
+          onClick={refreshData}
+          disabled={refreshing}
+          className="px-4 py-2 bg-[#1CA7C9] text-white rounded-lg hover:bg-[#0F4C75] transition flex items-center gap-2"
+        >
+          {refreshing ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
+          {refreshing ? 'Refreshing...' : 'Refresh Analysis'}
+        </button>
+      </div>
 
       {/* AI Status Card */}
       <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg shadow-sm p-6">
