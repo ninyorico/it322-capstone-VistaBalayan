@@ -224,6 +224,51 @@ export default function Reports() {
   useEffect(() => {
     fetchChartData();
   }, [filterType, selectedYear, selectedMonth, selectedDate]);
+
+   const handleExport = () => {
+    toast.success("Exporting report data...");
+  };
+
+  const handleViewDetails = (submission: Submission) => {
+    setSelectedSubmission(submission);
+    setReviewNotes(submission.notes || "");
+    setShowDetailModal(true);
+  };
+
+  const handleApprove = async (id: string, type: string) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      toast.error("You must be logged in to approve reports");
+      return;
+    }
+
+    const table = type === "Visitor Report" ? "visitor_reports" : "accommodation_reports";
+    const { error } = await supabase
+      .from(table)
+      .update({
+        status: "approved",
+        reviewed_by: user.id,
+        reviewed_at: new Date().toISOString(),
+        notes: reviewNotes || null,
+      })
+      .eq("id", id);
+
+    if (error) {
+      toast.error("Failed to approve: " + error.message);
+    } else {
+      toast.success("Submission approved");
+      fetchSubmissions();
+      setShowDetailModal(false);
+      setReviewNotes("");
+    }
+  };
+
+  const handleReject = async (id: string, type: string) => {
+    if (!reviewNotes) {
+      toast.error("Please provide a reason for rejection");
+      return;
+    }
   
 
    {/* Submissions Table */}
