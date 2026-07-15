@@ -224,3 +224,124 @@ export default function Reports() {
   useEffect(() => {
     fetchChartData();
   }, [filterType, selectedYear, selectedMonth, selectedDate]);
+  
+
+   {/* Submissions Table */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <div className="p-4 border-b border-gray-200">
+          <h3 className="text-lg font-semibold text-gray-900">Submissions</h3>
+          <p className="text-sm text-gray-600">Click "Review" to approve or reject</p>
+        </div>
+        <div className="overflow-x-auto">
+          {loading ? (
+            <div className="p-8 text-center">Loading...</div>
+          ) : (
+            <table className="w-full">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700">Establishment</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700">Type</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700">Date</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700">Visitors</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700">Status</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700">Action</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {filteredReports.slice(0, 50).map((report) => (
+                  <tr key={report.id} className="hover:bg-gray-50">
+                    <td className="px-4 py-3 text-sm font-medium text-gray-900">{report.establishment}</td>
+                    <td className="px-4 py-3 text-sm text-gray-600">{report.type}</td>
+                    <td className="px-4 py-3 text-sm text-gray-900">{report.reportDate}</td>
+                    <td className="px-4 py-3 text-sm text-gray-900">{report.visitors}</td>
+                    <td className="px-4 py-3">
+                      <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                        report.status === "approved" ? "bg-green-100 text-green-700" :
+                        report.status === "rejected" ? "bg-red-100 text-red-700" :
+                        "bg-yellow-100 text-yellow-700"
+                      }`}>
+                        {report.status}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3">
+                      <button onClick={() => handleViewDetails(report)} className="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                        Review
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+                {filteredReports.length === 0 && (
+                  <tr>
+                    <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
+                      No submissions found.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          )}
+        </div>
+      </div>
+
+      {/* Review Modal */}
+      {showDetailModal && selectedSubmission && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200 flex items-center justify-between">
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">Review Submission</h2>
+                <p className="text-sm text-gray-600">{selectedSubmission.establishment} - {selectedSubmission.type}</p>
+              </div>
+              <button onClick={() => { setShowDetailModal(false); setReviewNotes(""); }} className="p-1 hover:bg-gray-100 rounded">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div><label className="text-sm font-medium text-gray-700">Report Date</label><p className="text-gray-900">{selectedSubmission.reportDate}</p></div>
+                <div><label className="text-sm font-medium text-gray-700">Visitors</label><p className="text-gray-900">{selectedSubmission.visitors}</p></div>
+                <div><label className="text-sm font-medium text-gray-700">Submitted</label><p className="text-gray-900">{selectedSubmission.submitted}</p></div>
+                <div><label className="text-sm font-medium text-gray-700">Status</label>
+                  <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                    selectedSubmission.status === "approved" ? "bg-green-100 text-green-700" :
+                    selectedSubmission.status === "rejected" ? "bg-red-100 text-red-700" :
+                    "bg-yellow-100 text-yellow-700"
+                  }`}>{selectedSubmission.status}</span>
+                </div>
+              </div>
+              
+              {selectedSubmission.status === "pending" && (
+                <div>
+                  <label className="text-sm font-medium text-gray-700">Review Notes</label>
+                  <textarea
+                    value={reviewNotes}
+                    onChange={(e) => setReviewNotes(e.target.value)}
+                    className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                    rows={3}
+                    placeholder="Add notes (required for rejection)..."
+                  />
+                </div>
+              )}
+            </div>
+            {selectedSubmission.status === "pending" && (
+              <div className="p-6 border-t border-gray-200 flex justify-end gap-3">
+                <button onClick={() => handleReject(selectedSubmission.id, selectedSubmission.type)} className="px-4 py-2 border border-red-600 text-red-600 rounded-lg hover:bg-red-50 text-sm">
+                  Reject
+                </button>
+                <button onClick={() => handleApprove(selectedSubmission.id, selectedSubmission.type)} className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm">
+                  Approve
+                </button>
+              </div>
+            )}
+            {selectedSubmission.status !== "pending" && (
+              <div className="p-6 border-t border-gray-200 flex justify-end">
+                <button onClick={() => { setShowDetailModal(false); setReviewNotes(""); }} className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-sm">
+                  Close
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
