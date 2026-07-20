@@ -269,182 +269,67 @@ export default function Reports() {
       toast.error("Please provide a reason for rejection");
       return;
     }
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      toast.error("You must be logged in to reject reports");
+      return;
+    }
 
+    const table = type === "Visitor Report" ? "visitor_reports" : "accommodation_reports";
+    const { error } = await supabase
+      .from(table)
+      .update({
+        status: "rejected",
+        reviewed_by: user.id,
+        reviewed_at: new Date().toISOString(),
+        notes: reviewNotes,
+      })
+      .eq("id", id);
 
-    return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">Reports</h1>
-        <p className="text-gray-600 mt-1">Generate and export tourism data reports</p>
-      </div>
+    if (error) {
+      toast.error("Failed to reject: " + error.message);
+    } else {
+      toast.success("Submission rejected");
+      fetchSubmissions();
+      setShowDetailModal(false);
+      setReviewNotes("");
+    }
+  };
 
-      {/* Simplified Filters */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-        <div className="flex flex-wrap items-center gap-4">
-          {/* Filter Type Toggle */}
-          <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
-            {["year", "month", "date"].map((type) => (
-              <button
-                key={type}
-                onClick={() => {
-                  setFilterType(type as any);
-                  if (type === "year") setSelectedMonth("");
-                  if (type === "date") { setSelectedYear(""); setSelectedMonth(""); }
-                }}
-                className={`px-3 py-1.5 text-sm rounded-lg transition ${
-                  filterType === type
-                    ? "bg-blue-600 text-white"
-                    : "text-gray-600 hover:bg-gray-200"
-                }`}
-              >
-                {type.charAt(0).toUpperCase() + type.slice(1)}
-              </button>
-            ))}
-          </div>
+  // Get filter label for display
+  const getFilterLabel = () => {
+    if (filterType === "date" && selectedDate) return `Date: ${selectedDate}`;
+    if (filterType === "month" && selectedYear && selectedMonth) {
+      return `${selectedMonth} ${selectedYear}`;
+    }
+    if (filterType === "year" && selectedYear) return `Year: ${selectedYear}`;
+    return "All Data";
+  };
 
-          {/* Year Dropdown */}
-          {filterType !== "date" && (
-            <select
-              value={selectedYear}
-              onChange={(e) => setSelectedYear(e.target.value)}
-              className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm"
-            >
-              <option value="2024">2024</option>
-              <option value="2025">2025</option>
-              <option value="2026">2026</option>
-            </select>
-          )}
+  // Filter submissions for table
+  const filteredReports = submissions.filter((report) => {
+    const matchesSearch = report.establishment.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = filterStatus === "all" || report.status.toLowerCase() === filterStatus.toLowerCase();
+    
+    let matchesDate = true;
+    if (filterType === "date" && selectedDate) {
+      matchesDate = report.reportDate === selectedDate;
+    } else if (filterType === "month" && selectedYear && selectedMonth) {
+      const monthNum = months.indexOf(selectedMonth) + 1;
+      const monthStr = String(monthNum).padStart(2, '0');
+      matchesDate = report.reportDate.startsWith(`${selectedYear}-${monthStr}`);
+    } else if (filterType === "year" && selectedYear) {
+      matchesDate = report.reportDate.startsWith(selectedYear);
+    }
+    
+    return matchesSearch && matchesStatus && matchesDate;
+  });
 
-          {/* Month Dropdown */}
-          {filterType === "month" && (
-            <select
-              value={selectedMonth}
-              onChange={(e) => setSelectedMonth(e.target.value)}
-              className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm"
-            >
-              <option value="">All Months</option>
-              {months.map((month) => (
-                <option key={month} value={month}>{month}</option>
-              ))}
-            </select>
-          )}
-
-          {/* Date Picker */}
-          {filterType === "date" && (
-            <input
-              type="date"
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
-              className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm"
-            />
-          )}
-
-          <span className="text-gray-300">|</span>
-
-          {/* Status Filter */}
-          <select
-            value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value)}
-            className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm"
-          >
-            <option value="all">All Status</option>
-            <option value="pending">Pending</option>
-            <option value="approved">Approved</option>
-            <option value="rejected">Rejected</option>
-          </select>
-
-          {/* Search */}
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search establishment..."
-            className="flex-1 min-w-[150px] px-3 py-1.5 border border-gray-300 rounded-lg text-sm"
-          />
-
-          {/* Export Button */}
-          <button
-            onClick={handleExport}
-            className="flex items-center gap-2 px-4 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm"
-          >
-            <FileSpreadsheet className="w-4 h-4" /> Export
-          </button>
-        </div>
-      </div>
-
-      {/* Report Chart */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
-          Visitor Trends ({getFilterLabel()})
-        </h3>
-        {chartData.length > 0 ? (
-          <ResponsiveContainer width="100%" height={350}>
-            <LineChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="period" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Line type="monotone" dataKey="visitors" stroke="#3b82f6" strokeWidth={2} name="Visitors" />
-            </LineChart>
-          </ResponsiveContainer>
-        ) : (
-          <div className="text-center py-12 text-gray-500">No data available for the selected period</div>
-        )}
-      </div>
-
-      {/* Visitor Count Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <div className="flex items-center gap-3 mb-2">
-            <Users className="w-5 h-5 text-blue-600" />
-            <p className="text-sm text-gray-600">Current Period</p>
-          </div>
-          <p className="text-3xl font-bold text-gray-900">{visitorStats.currentTotal.toLocaleString()}</p>
-        </div>
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <div className="flex items-center gap-3 mb-2">
-            <Users className="w-5 h-5 text-purple-600" />
-            <p className="text-sm text-gray-600">Previous Period</p>
-          </div>
-          <p className="text-3xl font-bold text-gray-900">{visitorStats.previousTotal.toLocaleString()}</p>
-        </div>
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <div className="flex items-center gap-3 mb-2">
-            {visitorStats.isIncrease ? <TrendingUp className="w-5 h-5 text-green-600" /> : <TrendingDown className="w-5 h-5 text-red-600" />}
-            <p className="text-sm text-gray-600">Change</p>
-          </div>
-          <div className="flex items-baseline gap-2">
-            <p className={`text-3xl font-bold ${visitorStats.isIncrease ? "text-green-600" : "text-red-600"}`}>
-              {visitorStats.isIncrease ? "+" : ""}
-              {visitorStats.difference.toLocaleString()}
-            </p>
-            <span className={`text-sm font-medium ${visitorStats.isIncrease ? "text-green-600" : "text-red-600"}`}>
-              ({visitorStats.isIncrease ? "+" : ""}{visitorStats.percentageChange}%)
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <p className="text-sm text-gray-600 mb-1">Total Submissions</p>
-          <p className="text-3xl font-bold text-gray-900">{totalSubmissions}</p>
-        </div>
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <p className="text-sm text-gray-600 mb-1">Pending Review</p>
-          <p className="text-3xl font-bold text-yellow-600">{pendingCount}</p>
-        </div>
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <p className="text-sm text-gray-600 mb-1">Approved</p>
-          <p className="text-3xl font-bold text-green-600">{approvedCount}</p>
-        </div>
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <p className="text-sm text-gray-600 mb-1">Rejected</p>
-          <p className="text-3xl font-bold text-red-600">{rejectedCount}</p>
-        </div>
-      </div>
+  const totalSubmissions = submissions.length;
+  const pendingCount = submissions.filter((s) => s.status === "pending").length;
+  const approvedCount = submissions.filter((s) => s.status === "approved").length;
+  const rejectedCount = submissions.filter((s) => s.status === "rejected").length;
   
 
    {/* Submissions Table */}
