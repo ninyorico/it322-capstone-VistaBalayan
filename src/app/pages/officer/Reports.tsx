@@ -224,3 +224,345 @@ export default function Reports() {
   useEffect(() => {
     fetchChartData();
   }, [filterType, selectedYear, selectedMonth, selectedDate]);
+
+   const handleExport = () => {
+    toast.success("Exporting report data...");
+  };
+
+  const handleViewDetails = (submission: Submission) => {
+    setSelectedSubmission(submission);
+    setReviewNotes(submission.notes || "");
+    setShowDetailModal(true);
+  };
+
+  const handleApprove = async (id: string, type: string) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      toast.error("You must be logged in to approve reports");
+      return;
+    }
+
+    const table = type === "Visitor Report" ? "visitor_reports" : "accommodation_reports";
+    const { error } = await supabase
+      .from(table)
+      .update({
+        status: "approved",
+        reviewed_by: user.id,
+        reviewed_at: new Date().toISOString(),
+        notes: reviewNotes || null,
+      })
+      .eq("id", id);
+
+    if (error) {
+      toast.error("Failed to approve: " + error.message);
+    } else {
+      toast.success("Submission approved");
+      fetchSubmissions();
+      setShowDetailModal(false);
+      setReviewNotes("");
+    }
+  };
+
+  const handleReject = async (id: string, type: string) => {
+    if (!reviewNotes) {
+      toast.error("Please provide a reason for rejection");
+      return;
+    }
+
+
+    return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold text-gray-900">Reports</h1>
+        <p className="text-gray-600 mt-1">Generate and export tourism data reports</p>
+      </div>
+
+      {/* Simplified Filters */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+        <div className="flex flex-wrap items-center gap-4">
+          {/* Filter Type Toggle */}
+          <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
+            {["year", "month", "date"].map((type) => (
+              <button
+                key={type}
+                onClick={() => {
+                  setFilterType(type as any);
+                  if (type === "year") setSelectedMonth("");
+                  if (type === "date") { setSelectedYear(""); setSelectedMonth(""); }
+                }}
+                className={`px-3 py-1.5 text-sm rounded-lg transition ${
+                  filterType === type
+                    ? "bg-blue-600 text-white"
+                    : "text-gray-600 hover:bg-gray-200"
+                }`}
+              >
+                {type.charAt(0).toUpperCase() + type.slice(1)}
+              </button>
+            ))}
+          </div>
+
+          {/* Year Dropdown */}
+          {filterType !== "date" && (
+            <select
+              value={selectedYear}
+              onChange={(e) => setSelectedYear(e.target.value)}
+              className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm"
+            >
+              <option value="2024">2024</option>
+              <option value="2025">2025</option>
+              <option value="2026">2026</option>
+            </select>
+          )}
+
+          {/* Month Dropdown */}
+          {filterType === "month" && (
+            <select
+              value={selectedMonth}
+              onChange={(e) => setSelectedMonth(e.target.value)}
+              className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm"
+            >
+              <option value="">All Months</option>
+              {months.map((month) => (
+                <option key={month} value={month}>{month}</option>
+              ))}
+            </select>
+          )}
+
+          {/* Date Picker */}
+          {filterType === "date" && (
+            <input
+              type="date"
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
+              className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm"
+            />
+          )}
+
+          <span className="text-gray-300">|</span>
+
+          {/* Status Filter */}
+          <select
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value)}
+            className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm"
+          >
+            <option value="all">All Status</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+          </select>
+
+          {/* Search */}
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search establishment..."
+            className="flex-1 min-w-[150px] px-3 py-1.5 border border-gray-300 rounded-lg text-sm"
+          />
+
+          {/* Export Button */}
+          <button
+            onClick={handleExport}
+            className="flex items-center gap-2 px-4 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm"
+          >
+            <FileSpreadsheet className="w-4 h-4" /> Export
+          </button>
+        </div>
+      </div>
+
+      {/* Report Chart */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          Visitor Trends ({getFilterLabel()})
+        </h3>
+        {chartData.length > 0 ? (
+          <ResponsiveContainer width="100%" height={350}>
+            <LineChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="period" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Line type="monotone" dataKey="visitors" stroke="#3b82f6" strokeWidth={2} name="Visitors" />
+            </LineChart>
+          </ResponsiveContainer>
+        ) : (
+          <div className="text-center py-12 text-gray-500">No data available for the selected period</div>
+        )}
+      </div>
+
+      {/* Visitor Count Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center gap-3 mb-2">
+            <Users className="w-5 h-5 text-blue-600" />
+            <p className="text-sm text-gray-600">Current Period</p>
+          </div>
+          <p className="text-3xl font-bold text-gray-900">{visitorStats.currentTotal.toLocaleString()}</p>
+        </div>
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center gap-3 mb-2">
+            <Users className="w-5 h-5 text-purple-600" />
+            <p className="text-sm text-gray-600">Previous Period</p>
+          </div>
+          <p className="text-3xl font-bold text-gray-900">{visitorStats.previousTotal.toLocaleString()}</p>
+        </div>
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center gap-3 mb-2">
+            {visitorStats.isIncrease ? <TrendingUp className="w-5 h-5 text-green-600" /> : <TrendingDown className="w-5 h-5 text-red-600" />}
+            <p className="text-sm text-gray-600">Change</p>
+          </div>
+          <div className="flex items-baseline gap-2">
+            <p className={`text-3xl font-bold ${visitorStats.isIncrease ? "text-green-600" : "text-red-600"}`}>
+              {visitorStats.isIncrease ? "+" : ""}
+              {visitorStats.difference.toLocaleString()}
+            </p>
+            <span className={`text-sm font-medium ${visitorStats.isIncrease ? "text-green-600" : "text-red-600"}`}>
+              ({visitorStats.isIncrease ? "+" : ""}{visitorStats.percentageChange}%)
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <p className="text-sm text-gray-600 mb-1">Total Submissions</p>
+          <p className="text-3xl font-bold text-gray-900">{totalSubmissions}</p>
+        </div>
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <p className="text-sm text-gray-600 mb-1">Pending Review</p>
+          <p className="text-3xl font-bold text-yellow-600">{pendingCount}</p>
+        </div>
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <p className="text-sm text-gray-600 mb-1">Approved</p>
+          <p className="text-3xl font-bold text-green-600">{approvedCount}</p>
+        </div>
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <p className="text-sm text-gray-600 mb-1">Rejected</p>
+          <p className="text-3xl font-bold text-red-600">{rejectedCount}</p>
+        </div>
+      </div>
+  
+
+   {/* Submissions Table */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <div className="p-4 border-b border-gray-200">
+          <h3 className="text-lg font-semibold text-gray-900">Submissions</h3>
+          <p className="text-sm text-gray-600">Click "Review" to approve or reject</p>
+        </div>
+        <div className="overflow-x-auto">
+          {loading ? (
+            <div className="p-8 text-center">Loading...</div>
+          ) : (
+            <table className="w-full">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700">Establishment</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700">Type</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700">Date</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700">Visitors</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700">Status</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700">Action</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {filteredReports.slice(0, 50).map((report) => (
+                  <tr key={report.id} className="hover:bg-gray-50">
+                    <td className="px-4 py-3 text-sm font-medium text-gray-900">{report.establishment}</td>
+                    <td className="px-4 py-3 text-sm text-gray-600">{report.type}</td>
+                    <td className="px-4 py-3 text-sm text-gray-900">{report.reportDate}</td>
+                    <td className="px-4 py-3 text-sm text-gray-900">{report.visitors}</td>
+                    <td className="px-4 py-3">
+                      <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                        report.status === "approved" ? "bg-green-100 text-green-700" :
+                        report.status === "rejected" ? "bg-red-100 text-red-700" :
+                        "bg-yellow-100 text-yellow-700"
+                      }`}>
+                        {report.status}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3">
+                      <button onClick={() => handleViewDetails(report)} className="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                        Review
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+                {filteredReports.length === 0 && (
+                  <tr>
+                    <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
+                      No submissions found.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          )}
+        </div>
+      </div>
+
+      {/* Review Modal */}
+      {showDetailModal && selectedSubmission && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200 flex items-center justify-between">
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">Review Submission</h2>
+                <p className="text-sm text-gray-600">{selectedSubmission.establishment} - {selectedSubmission.type}</p>
+              </div>
+              <button onClick={() => { setShowDetailModal(false); setReviewNotes(""); }} className="p-1 hover:bg-gray-100 rounded">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div><label className="text-sm font-medium text-gray-700">Report Date</label><p className="text-gray-900">{selectedSubmission.reportDate}</p></div>
+                <div><label className="text-sm font-medium text-gray-700">Visitors</label><p className="text-gray-900">{selectedSubmission.visitors}</p></div>
+                <div><label className="text-sm font-medium text-gray-700">Submitted</label><p className="text-gray-900">{selectedSubmission.submitted}</p></div>
+                <div><label className="text-sm font-medium text-gray-700">Status</label>
+                  <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                    selectedSubmission.status === "approved" ? "bg-green-100 text-green-700" :
+                    selectedSubmission.status === "rejected" ? "bg-red-100 text-red-700" :
+                    "bg-yellow-100 text-yellow-700"
+                  }`}>{selectedSubmission.status}</span>
+                </div>
+              </div>
+              
+              {selectedSubmission.status === "pending" && (
+                <div>
+                  <label className="text-sm font-medium text-gray-700">Review Notes</label>
+                  <textarea
+                    value={reviewNotes}
+                    onChange={(e) => setReviewNotes(e.target.value)}
+                    className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                    rows={3}
+                    placeholder="Add notes (required for rejection)..."
+                  />
+                </div>
+              )}
+            </div>
+            {selectedSubmission.status === "pending" && (
+              <div className="p-6 border-t border-gray-200 flex justify-end gap-3">
+                <button onClick={() => handleReject(selectedSubmission.id, selectedSubmission.type)} className="px-4 py-2 border border-red-600 text-red-600 rounded-lg hover:bg-red-50 text-sm">
+                  Reject
+                </button>
+                <button onClick={() => handleApprove(selectedSubmission.id, selectedSubmission.type)} className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm">
+                  Approve
+                </button>
+              </div>
+            )}
+            {selectedSubmission.status !== "pending" && (
+              <div className="p-6 border-t border-gray-200 flex justify-end">
+                <button onClick={() => { setShowDetailModal(false); setReviewNotes(""); }} className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-sm">
+                  Close
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
