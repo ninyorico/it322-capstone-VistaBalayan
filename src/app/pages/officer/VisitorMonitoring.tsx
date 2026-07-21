@@ -109,7 +109,46 @@ export default function VisitorMonitoring({ embedded = false }: { embedded?: boo
     toast.success(`Exported ${filteredRecords.length} visitor record(s)`);
   };
 
-  
+   if (loading) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1CA7C9] mx-auto"></div>
+        <p className="mt-4 text-gray-600">Loading visitor records...</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {!embedded && (
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Visitor Monitoring</h1>
+          <p className="text-gray-600 mt-1">
+            Monitor and review visitor data from all establishments
+          </p>
+        </div>
+      )}
+
+      {/* Statistics */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <p className="text-sm text-gray-600 mb-1">Total Visitors</p>
+          <p className="text-3xl font-bold text-gray-900">{totalVisitors}</p>
+        </div>
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <p className="text-sm text-gray-600 mb-1">Male</p>
+          <p className="text-3xl font-bold text-blue-600">{totalMale}</p>
+        </div>
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <p className="text-sm text-gray-600 mb-1">Female</p>
+          <p className="text-3xl font-bold text-purple-600">{totalFemale}</p>
+        </div>
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <p className="text-sm text-gray-600 mb-1">Total Records</p>
+          <p className="text-3xl font-bold text-gray-900">{filteredRecords.length}</p>
+        </div>
+      </div>
+
 
   {/* Visitor Records Table */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
