@@ -108,3 +108,67 @@ export default function VisitorMonitoring({ embedded = false }: { embedded?: boo
     );
     toast.success(`Exported ${filteredRecords.length} visitor record(s)`);
   };
+
+  
+
+  {/* Visitor Records Table */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-gray-50 border-b border-gray-200">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Date</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Establishment</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Guest/Group</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Male</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Female</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Total</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Residence Type</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Location</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {filteredRecords.length > 0 ? (
+                filteredRecords.map((record) => (
+                  <tr key={record.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 text-sm text-gray-600">{record.date}</td>
+                    <td className="px-6 py-4 font-medium text-gray-900">{record.establishment}</td>
+                    <td className="px-6 py-4 text-gray-900">{record.guestName}</td>
+                    <td className="px-6 py-4 text-blue-600 font-medium">{record.male}</td>
+                    <td className="px-6 py-4 text-purple-600 font-medium">{record.female}</td>
+                    <td className="px-6 py-4 text-gray-900 font-semibold">{record.total}</td>
+                    <td className="px-6 py-4">
+                      <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-medium ${
+                        record.residenceType === "Batangas Resident"
+                          ? "bg-blue-100 text-blue-700"
+                          : record.residenceType === "Outside Batangas"
+                          ? "bg-purple-100 text-purple-700"
+                          : "bg-green-100 text-green-700"
+                      }`}>
+                        {record.residenceType}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-gray-600">{record.location}</td>
+                    <td className="px-6 py-4">
+                      <button className="p-1 text-blue-600 hover:bg-blue-50 rounded transition">
+                        <Eye className="w-4 h-4" />
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={9} className="px-6 py-8 text-center text-gray-500">
+                    No visitor records found.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+
+}
