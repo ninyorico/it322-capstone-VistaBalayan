@@ -117,4 +117,180 @@ export default function Establishments() {
     return matchesSearch && matchesRole && matchesStatus;
   });
 
+    const handleAddEstablishment = () => {
+      setEditingEstablishment(null);
+      setEstablishmentForm({
+        name: "",
+        type: "Hotel",
+        address: "",
+        contact_number: "",
+        total_rooms: 0,
+        status: "active",
+      });
+      setShowEstablishmentModal(true);
+    };
+
+    const handleEditEstablishment = (id: string) => {
+      const establishment = establishments.find((e) => e.id === id);
+      if (establishment) {
+        setEditingEstablishment(establishment);
+        setEstablishmentForm({
+          name: establishment.name,
+          type: establishment.type,
+          address: establishment.address,
+          contact_number: establishment.contact_number,
+          total_rooms: establishment.total_rooms,
+          status: establishment.status,
+        });
+        setShowEstablishmentModal(true);
+      }
+    };
+
+    const handleSaveEstablishment = async () => {
+      if (!establishmentForm.name || !establishmentForm.address || !establishmentForm.contact_number) {
+        toast.error("Please fill in all required fields");
+        return;
+      }
+
+      if (editingEstablishment) {
+        const { error } = await supabase
+          .from('establishments')
+          .update({
+            name: establishmentForm.name,
+            type: establishmentForm.type,
+            address: establishmentForm.address,
+            contact_number: establishmentForm.contact_number,
+            total_rooms: establishmentForm.total_rooms,
+            status: establishmentForm.status,
+          })
+          .eq('id', editingEstablishment.id);
+        
+        if (error) {
+          toast.error("Failed to update: " + error.message);
+        } else {
+          toast.success("Establishment updated successfully");
+          fetchEstablishments();
+          setShowEstablishmentModal(false);
+        }
+      } else {
+        const { error } = await supabase
+          .from('establishments')
+          .insert([{
+            name: establishmentForm.name,
+            type: establishmentForm.type,
+            address: establishmentForm.address,
+            contact_number: establishmentForm.contact_number,
+            total_rooms: establishmentForm.total_rooms,
+            status: establishmentForm.status,
+          }]);
+        
+        if (error) {
+          toast.error("Failed to add: " + error.message);
+        } else {
+          toast.success("Establishment added successfully");
+          fetchEstablishments();
+          setShowEstablishmentModal(false);
+        }
+      }
+    };
+
+    const handleDeleteEstablishment = (id: string) => {
+      setDeleteTarget({ type: "establishment", id });
+      setShowDeleteConfirm(true);
+    };
+
+    const handleAddUser = () => {
+      setEditingUser(null);
+      setUserForm({
+        full_name: "",
+        email: "",
+        role: "establishment_staff",
+        establishment_id: "",
+        status: "active",
+      });
+      setShowUserModal(true);
+    };
+
+    const handleEditUser = (id: string) => {
+      const user = users.find((u) => u.id === id);
+      if (user) {
+        setEditingUser(user);
+        setUserForm({
+          full_name: user.full_name || "",
+          email: user.email,
+          role: user.role,
+          establishment_id: user.establishment_id || "",
+          status: user.status || "active",
+        });
+        setShowUserModal(true);
+      }
+    };
+
+    const handleSaveUser = async () => {
+      if (!userForm.full_name || !userForm.email) {
+        toast.error("Please fill in all required fields");
+        return;
+      }
+
+      if (editingUser) {
+        const { error } = await supabase
+          .from('profiles')
+          .update({
+            full_name: userForm.full_name,
+            role: userForm.role,
+            establishment_id: userForm.establishment_id || null,
+            status: userForm.status,
+          })
+          .eq('id', editingUser.id);
+        
+        if (error) {
+          toast.error("Failed to update: " + error.message);
+        } else {
+          toast.success("User updated successfully");
+          fetchUsers();
+          setShowUserModal(false);
+        }
+      } else {
+        toast.info("To add new users, please use Supabase Authentication dashboard first, then assign them here.");
+      }
+    };
+
+    const handleDeleteUser = (id: string) => {
+      setDeleteTarget({ type: "user", id });
+      setShowDeleteConfirm(true);
+    };
+
+    const confirmDelete = async () => {
+      if (!deleteTarget) return;
+
+      if (deleteTarget.type === "establishment") {
+        const { error } = await supabase
+          .from('establishments')
+          .delete()
+          .eq('id', deleteTarget.id);
+        
+        if (error) {
+          toast.error("Failed to delete: " + error.message);
+        } else {
+          toast.success("Establishment deleted successfully");
+          fetchEstablishments();
+        }
+      } else {
+        const { error } = await supabase
+          .from('profiles')
+          .update({ status: 'inactive' })
+          .eq('id', deleteTarget.id);
+        
+        if (error) {
+          toast.error("Failed to deactivate user: " + error.message);
+        } else {
+          toast.success("User deactivated successfully");
+          fetchUsers();
+        }
+      }
+      setShowDeleteConfirm(false);
+      setDeleteTarget(null);
+    };
+
+
 }
