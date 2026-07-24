@@ -149,6 +149,57 @@ export default function VisitorMonitoring({ embedded = false }: { embedded?: boo
         </div>
       </div>
 
+<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="flex flex-wrap items-center gap-4">
+          <div className="flex-1 min-w-64">
+            <div className="relative">
+              <Search className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search by establishment or location..."
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+              />
+            </div>
+          </div>
+          <div>
+            <select
+              value={filterResidence}
+              onChange={(e) => setFilterResidence(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+            >
+              <option value="all">All Residence Types</option>
+              <option value="Batangas Resident">Batangas Resident</option>
+              <option value="Outside Batangas">Outside Batangas</option>
+              <option value="Foreign">Foreign</option>
+            </select>
+          </div>
+          <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
+            <button
+              type="button"
+              className="px-3 py-1.5 text-sm rounded-lg bg-blue-600 text-white transition"
+              aria-pressed="true"
+            >
+              Month
+            </button>
+          </div>
+          <input
+            type="month"
+            value={specificMonth}
+            onChange={(e) => setSpecificMonth(e.target.value)}
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+            title="Select report month"
+          />
+          <button 
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+            onClick={handleExport}
+          >
+            <Download className="w-4 h-4" />
+            Export
+          </button>
+        </div>
+      </div>
 
   {/* Visitor Records Table */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
